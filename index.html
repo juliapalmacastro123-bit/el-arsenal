@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - DEFINITIVE BALANCE</title>
+    <title>EL ARSENAL 666 - COUNTDOWN MODE</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
         #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
         h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; }
-        select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 12px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
+        input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 12px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
         button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
         #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; font-weight: bold; }
         #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
@@ -19,15 +19,12 @@
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p style="color:#0f0; font-size:0.8rem;">RECORTE QUIRÚRGICO DE PLATILLOS (-30%)</p>
+        <p style="color:#0f0; font-size:0.8rem;">ENGINE: MEGADETH / RUST IN PEACE</p>
         <input type="file" id="archivo" accept="audio/*">
-        <select id="genero">
-            <option value="pro">🔥 MÁSTER PRO (CONTROL TOTAL)</option>
-        </select>
-        <div id="status">DOMANDO EL METAL... 🔥</div>
-        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
+        <div id="status">APLASTANDO PLATILLOS... 🔥</div>
+        <button id="btn-detonar">DETONAR MÁSTER MEGADETH 💥</button>
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER NIVEL DISCO</h3>
+            <h3 style="color: #0f0;">MÁSTER NIVEL ESTUDIO PRO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
             <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER</a>
         </div>
@@ -48,42 +45,41 @@
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // 1. RECORTE DE CHILLIDO (Notch Filter)
-                // Vamos directo a la frecuencia donde el platillo estorba
-                const notch = offlineCtx.createBiquadFilter();
-                notch.type = "notch";
-                notch.frequency.value = 6500;
-                notch.Q.value = 1.0;
+                // 1. DE-ESSER AGRESIVO (Aplastamos el siseo de las "tostadas")
+                // Filtro para detectar solo el ruido molesto
+                const deEsser = offlineCtx.createBiquadFilter();
+                deEsser.type = "peaking";
+                deEsser.frequency.value = 7000;
+                deEsser.Q.value = 2.0;
+                deEsser.gain.value = -15; // Corte profundo en el chillido
 
-                // 2. CORTE DE AIRE (High Shelf Negativo)
-                // Bajamos ese 30% de brillo excesivo que mencionas
-                const shelf = offlineCtx.createBiquadFilter();
-                shelf.type = "highshelf";
-                shelf.frequency.value = 8000;
-                shelf.gain.value = -6; // Atenuación controlada
+                // 2. LIMITADOR DE AGUDOS (Corte de tajo Megadeth)
+                const hiCut = offlineCtx.createBiquadFilter();
+                hiCut.type = "lowpass";
+                hiCut.frequency.value = 9000; // Nada de "aire" innecesario, solo poder
 
-                // 3. PRESENCIA DE GUITARRAS Y VOZ
-                const presence = offlineCtx.createBiquadFilter();
-                presence.type = "peaking";
-                presence.frequency.value = 2800;
-                presence.gain.value = 12; // Le damos el poder a lo que importa
+                // 3. GUITAR BODY (Ese sonido "parejo" que buscas)
+                const body = offlineCtx.createBiquadFilter();
+                body.type = "peaking";
+                body.frequency.value = 1500;
+                body.gain.value = 8; // Punch en el pecho
 
-                // 4. COMPRESIÓN FINAL (Glue)
+                // 4. COMPRESIÓN MULTIBANDA (Soft Clipper)
                 const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -22;
-                comp.ratio.value = 14;
-                comp.attack.value = 0.002;
+                comp.threshold.value = -30; // Compresión fuerte para igualar todo
+                comp.ratio.value = 20;
+                comp.attack.value = 0.001; 
+                comp.knee.value = 0; // Hard knee para controlar los transitorios
 
-                const gain = offlineCtx.createGain();
-                gain.gain.value = 3.8;
+                const finalGain = offlineCtx.createGain();
+                finalGain.gain.value = 4.0;
 
-                // CADENA: Source -> Notch -> Shelf -> Presence -> Comp -> Gain
-                source.connect(notch);
-                notch.connect(shelf);
-                shelf.connect(presence);
-                presence.connect(comp);
-                comp.connect(gain);
-                gain.connect(offlineCtx.destination);
+                source.connect(deEsser);
+                deEsser.connect(hiCut);
+                hiCut.connect(body);
+                body.connect(comp);
+                comp.connect(finalGain);
+                finalGain.connect(offlineCtx.destination);
                 
                 source.start(0);
                 const renderedBuffer = await offlineCtx.startRendering();
@@ -91,7 +87,7 @@
                 
                 document.getElementById('reproductor').src = URL.createObjectURL(blob);
                 document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Master_Final_Arsenal.wav";
+                document.getElementById('link-descarga').download = "Master_Megadeth_Style.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
                 document.getElementById('status').style.display = 'none';
             };
