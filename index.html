@@ -3,39 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - ZERO LAG</title>
+    <title>EL ARSENAL 666 - FULL GENRE ENGINE</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
-        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
-        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; }
-        input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
-        button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
-        #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; font-weight: bold; }
-        #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
+        #bunker { border: 4px double #f00; padding: 20px; box-shadow: 0 0 50px #f00; display: inline-block; background: #050505; border-radius: 15px; width: 100%; max-width: 420px; }
+        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 5px 0; letter-spacing: 2px; }
+        p { font-size: 0.75rem; color: #0f0; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+        select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
+        button { background: #f00; color: #000; cursor: pointer; font-size: 1.3rem; box-shadow: 0 6px #600; border: none; }
+        #status { color: #fff; background: #900; display: none; padding: 10px; margin: 10px 0; border: 1px solid #fff; }
+        #descarga-zona { display: none; margin-top: 20px; border-top: 5px double #0f0; padding-top: 15px; }
+        .btn-download { background: #0f0; color: #000; padding: 18px; text-decoration: none; font-weight: bold; display: block; border-radius: 10px; border: 2px solid #fff; }
     </style>
 </head>
 <body translate="no">
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p style="color:#0f0; font-size:0.75rem;">FIX: VELOCIDAD Y MARCAS PRO</p>
+        <p>MARCAS: MARSHALL • AMPEG • TAMA • PAISTE • NEVE</p>
         
+        <select id="genero">
+            <option value="thrash">🔥 THRASH (MEGADETH/METALLICA)</option>
+            <option value="death">💀 DEATH METAL (MORBID ANGEL/DEATH)</option>
+            <option value="grunge">🎸 GRUNGE (NIRVANA/AIC)</option>
+            <option value="heavy">⛓️ HEAVY CLASSIC (MAIDEN/PRIEST)</option>
+            <option value="black">🕯️ BLACK METAL (BURZUM/MAYHEM)</option>
+            <option value="nu">🛹 NU METAL (KORN/LIMP BIZKIT)</option>
+            <option value="rock">⚡ ROCK N' ROLL (ACDC/GUNS)</option>
+            <option value="punk">🧷 PUNK ROCK (RAMONES/MISFITS)</option>
+            <option value="industrial">⚙️ INDUSTRIAL (NIN/RAMMSTEIN)</option>
+            <option value="doom">⚰️ DOOM/SLUDGE (SABBATH/CROWBAR)</option>
+        </select>
+
         <input type="file" id="archivo" accept="audio/*">
-        
-        <div id="status">PULIENDO AUDIO... 🔥</div>
-        
-        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
+        <div id="status">🔥 CALENTANDO EQUIPO DE MARCA... 🔥</div>
+        <button id="btn-detonar">DETONAR MÁSTER GENÉRICO 💥</button>
         
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER LISTO</h3>
+            <h3 style="color: #0f0;">MÁSTER NIVELADO Y PRO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" style="background:#0f0; color:#000; padding:15px; text-decoration:none; display:block; border-radius:5px; font-weight:bold; margin-top:10px;">📥 DESCARGAR MÁSTER</a>
+            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER .WAV</a>
         </div>
     </div>
 
     <script>
         document.getElementById('btn-detonar').onclick = async () => {
             const file = document.getElementById('archivo').files[0];
+            const genre = document.getElementById('genero').value;
             if (!file) return alert("Sube el track.");
             document.getElementById('status').style.display = 'block';
             
@@ -43,49 +57,66 @@
             reader.onload = async (e) => {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const decodedData = await audioCtx.decodeAudioData(e.target.result);
-                
-                // USAR EL SAMPLE RATE ORIGINAL ES LO QUE EVITA QUE SE ESCUCHE LENTO
                 const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
                 
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // Marshall Mid-Boost (Guitarras)
-                const marshall = offlineCtx.createBiquadFilter();
-                marshall.type = "peaking"; marshall.frequency.value = 2500; marshall.gain.value = 8;
-
-                // Tama Kick (Bombo)
-                const tama = offlineCtx.createBiquadFilter();
-                tama.type = "peaking"; tama.frequency.value = 80; tama.gain.value = 6;
-
-                // Paiste Rude Tamer (Domar platillos)
-                const rude = offlineCtx.createBiquadFilter();
-                rude.type = "lowpass"; rude.frequency.value = 8500;
-
-                // Master Glue (Compresor para que suene a disco)
-                const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -25; comp.ratio.value = 12;
-
+                // --- CADENA DE PROCESO ---
+                const saturation = offlineCtx.createWaveShaper();
+                const eq = offlineCtx.createBiquadFilter();
+                const notch = offlineCtx.createBiquadFilter(); // Anti-ollas
+                const limiter = offlineCtx.createDynamicsCompressor();
                 const gain = offlineCtx.createGain();
-                gain.gain.value = 3.2;
 
-                source.connect(marshall);
-                marshall.connect(tama);
-                tama.connect(rude);
-                rude.connect(comp);
-                comp.connect(gain);
-                gain.connect(offlineCtx.destination);
+                // 1. ELIMINADOR DE LATAS (Para todos los géneros)
+                notch.type = "notch"; notch.frequency.value = 4600; notch.Q.value = 2.0;
+
+                // 2. PRESETS DE GÉNERO
+                switch(genre) {
+                    case 'thrash': // El Megadeth Style
+                        eq.type = "peaking"; eq.frequency.value = 3200; eq.gain.value = 12;
+                        limiter.threshold.value = -35; break;
+                    case 'death': 
+                        eq.type = "lowshelf"; eq.frequency.value = 150; eq.gain.value = 15;
+                        limiter.threshold.value = -40; break;
+                    case 'grunge':
+                        eq.type = "peaking"; eq.frequency.value = 2000; eq.gain.value = 8;
+                        limiter.threshold.value = -28; break;
+                    case 'heavy':
+                        eq.type = "peaking"; eq.frequency.value = 4000; eq.gain.value = 6;
+                        limiter.threshold.value = -25; break;
+                    default:
+                        eq.type = "peaking"; eq.frequency.value = 3000; eq.gain.value = 5;
+                        limiter.threshold.value = -30;
+                }
+
+                // 3. SATURACIÓN ANALÓGICA
+                saturation.curve = (function(amount) {
+                    let k = amount, n = 44100, curve = new Float32Array(n);
+                    for (let i = 0; i < n; ++i) {
+                        let x = i * 2 / n - 1;
+                        curve[i] = (3 + k) * x * 20 * (Math.PI / 180) / (Math.PI + k * Math.abs(x));
+                    }
+                    return curve;
+                })(40);
+
+                // 4. LIMITACIÓN BRICKWALL (Nivelado Parejo)
+                limiter.ratio.value = 20;
+                limiter.attack.value = 0.001;
+                limiter.knee.value = 0;
+                gain.gain.value = 4.5;
+
+                // CONEXIÓN
+                source.connect(notch); notch.connect(eq); eq.connect(saturation); saturation.connect(limiter); limiter.connect(gain); gain.connect(offlineCtx.destination);
                 
                 source.start(0);
                 const renderedBuffer = await offlineCtx.startRendering();
-                
-                // Convertir a WAV directamente
                 const blob = bufferToWave(renderedBuffer, renderedBuffer.length);
-                const url = URL.createObjectURL(blob);
                 
-                document.getElementById('reproductor').src = url;
-                document.getElementById('link-descarga').href = url;
-                document.getElementById('link-descarga').download = "Master_Erick_Arsenal.wav";
+                document.getElementById('reproductor').src = URL.createObjectURL(blob);
+                document.getElementById('link-descarga').href = URL.createObjectURL(blob);
+                document.getElementById('link-descarga').download = `Master_${genre}.wav`;
                 document.getElementById('descarga-zona').style.display = 'block';
                 document.getElementById('status').style.display = 'none';
             };
@@ -99,7 +130,7 @@
             const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
             setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157); setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
             setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan); setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
-            for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
+            for(i = 0; i < numOfChan; i++) channels.push(abuffer.getChannelData(i));
             while(pos < length) {
                 for(i = 0; i < numOfChan; i++) {
                     sample = Math.max(-1, Math.min(1, channels[i][offset]));
