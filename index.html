@@ -3,35 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - SYNC MASTER</title>
+    <title>EL ARSENAL 666 - REAL TIME MASTER</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
-        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 30px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
+        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
         h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; }
-        p { font-size: 0.7rem; color: #0f0; margin-bottom: 10px; }
         input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
         button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
         #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; font-weight: bold; }
         #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
-        .btn-download { background: #0f0; color: #000; padding: 15px; text-decoration: none; font-weight: bold; display: block; border-radius: 5px; }
     </style>
 </head>
 <body translate="no">
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p>FIX: VELOCIDAD REAL • MARSHALL • TAMA • PAISTE</p>
+        <p style="color:#0f0; font-size:0.7rem;">MODO: VELOCIDAD GARANTIZADA</p>
         
         <input type="file" id="archivo" accept="audio/*">
         
-        <div id="status">SINCRONIZANDO Y PULIENDO... 🔥</div>
+        <div id="status">DETONANDO MASTER... 🔥</div>
         
-        <button id="btn-detonar">DETONAR MÁSTER SYNC 💥</button>
+        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
         
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER A VELOCIDAD REAL</h3>
+            <h3 style="color: #0f0;">MÁSTER LISTO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER .WAV</a>
+            <a id="link-descarga" style="background:#0f0; color:#000; padding:15px; text-decoration:none; display:block; border-radius:5px; font-weight:bold; margin-top:10px;">📥 DESCARGAR MÁSTER</a>
         </div>
     </div>
 
@@ -41,77 +39,51 @@
             if (!file) return alert("Sube el track.");
             document.getElementById('status').style.display = 'block';
             
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const reader = new FileReader();
+            
             reader.onload = async (e) => {
-                const tempCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const decodedData = await tempCtx.decodeAudioData(e.target.result);
+                const decodedData = await audioCtx.decodeAudioData(e.target.result);
                 
-                // --- AQUÍ ESTÁ EL TRUCO: Usar el SampleRate exacto del archivo ---
-                const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
-                
-                const source = offlineCtx.createBufferSource();
+                // --- PROCESO EN TIEMPO REAL PARA EVITAR ERROR DE VELOCIDAD ---
+                const source = audioCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // 1. Marshall Saturation (Cuerpo)
-                const jcm = offlineCtx.createWaveShaper();
-                jcm.curve = (function(amount) {
-                    let k = amount, n = 44100, curve = new Float32Array(n);
-                    for (let i = 0; i < n; ++i) {
-                        let x = i * 2 / n - 1;
-                        curve[i] = (3 + k) * x * 15 * (Math.PI / 180) / (Math.PI + k * Math.abs(x));
-                    }
-                    return curve;
-                })(40);
+                const jcm = audioCtx.createBiquadFilter();
+                jcm.type = "peaking"; jcm.frequency.value = 2500; jcm.gain.value = 10;
 
-                // 2. Tama Kick & Snare
-                const punch = offlineCtx.createBiquadFilter();
-                punch.type = "peaking"; punch.frequency.value = 80; punch.gain.value = 6;
+                const lowEnd = audioCtx.createBiquadFilter();
+                lowEnd.type = "peaking"; lowEnd.frequency.value = 80; lowEnd.gain.value = 8;
 
-                // 3. Paiste Rude Cut (Domando platillos)
-                const rude = offlineCtx.createBiquadFilter();
-                rude.type = "lowpass"; rude.frequency.value = 8000;
+                const rudeCut = audioCtx.createBiquadFilter();
+                rudeCut.type = "lowpass"; rudeCut.frequency.value = 8500;
 
-                // 4. Compresión Final
-                const comp = offlineCtx.createDynamicsCompressor();
+                const comp = audioCtx.createDynamicsCompressor();
                 comp.threshold.value = -25; comp.ratio.value = 12;
 
-                const gain = offlineCtx.createGain();
-                gain.gain.value = 3.5;
+                const dest = audioCtx.createMediaStreamDestination();
+                source.connect(jcm); jcm.connect(lowEnd); lowEnd.connect(rudeCut); rudeCut.connect(comp); comp.connect(dest);
 
-                source.connect(punch); punch.connect(jcm); jcm.connect(rude); rude.connect(comp); comp.connect(gain); gain.connect(offlineCtx.destination);
-                
+                const recorder = new MediaRecorder(dest.stream);
+                const chunks = [];
+                recorder.ondataavailable = ev => chunks.push(ev.data);
+                recorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/wav' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('reproductor').src = url;
+                    document.getElementById('link-descarga').href = url;
+                    document.getElementById('link-descarga').download = "Master_Erick_Final.wav";
+                    document.getElementById('descarga-zona').style.display = 'block';
+                    document.getElementById('status').style.display = 'none';
+                    alert("¡TERMINADO!");
+                };
+
+                recorder.start();
                 source.start(0);
-                const renderedBuffer = await offlineCtx.startRendering();
-                const blob = bufferToWave(renderedBuffer, renderedBuffer.length);
-                
-                document.getElementById('reproductor').src = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Master_Sync_Perfecto.wav";
-                document.getElementById('descarga-zona').style.display = 'block';
-                document.getElementById('status').style.display = 'none';
-                tempCtx.close();
+                source.onended = () => { recorder.stop(); audioCtx.close(); };
             };
             reader.readAsArrayBuffer(file);
         };
-
-        function bufferToWave(abuffer, len) {
-            let numOfChan = abuffer.numberOfChannels, length = len * numOfChan * 2 + 44, buffer = new ArrayBuffer(length), view = new DataView(buffer),
-                channels = [], i, sample, offset = 0, pos = 0;
-            const setUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
-            const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
-            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157); setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
-            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan); setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
-            for(i = 0; i < numOfChan; i++) channels.push(abuffer.getChannelData(i));
-            while(pos < length) {
-                for(i = 0; i < numOfChan; i++) {
-                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
-                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-                    view.setInt16(pos, sample, true); pos += 2;
-                }
-                offset++;
-            }
-            return new Blob([buffer], {type: "audio/wav"});
-        }
     </script>
 </body>
 </html>
