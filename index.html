@@ -2,19 +2,15 @@
 <html lang="es" translate="no">
 <head>
     <meta charset="UTF-8">
-    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - ULTRA-COMPRESS</title>
+    <title>EL ARSENAL 666 - GUITAR FOCUS</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
         #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
-        h1 { color: #fff; text-shadow: 2px 2px #f00; font-size: 1.8rem; margin: 10px 0; }
-        .precios { margin: 10px 0; font-size: 0.75rem; color: #0f0; border-collapse: collapse; width: 100%; }
-        .precios th, .precios td { border: 1px solid #222; padding: 6px; }
+        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; }
         select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 12px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
         button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
-        #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; border-radius: 4px; font-weight: bold; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; font-weight: bold; }
         #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
         .btn-download { background: #0f0; color: #000; padding: 15px; text-decoration: none; font-weight: bold; display: block; border-radius: 5px; }
     </style>
@@ -23,27 +19,18 @@
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <table class="precios">
-            <tr><th>PLAN</th><th>MEX</th><th>USD</th></tr>
-            <tr><td>1 SONG</td><td>$100</td><td>$20</td></tr>
-            <tr style="color: #0ff;"><td>6 SONGS (EP)</td><td>$400</td><td>$75</td></tr>
-        </table>
-        
         <input type="file" id="archivo" accept="audio/*">
         <select id="genero">
-            <option value="thrash">2. THRASH (MEGADETH)</option>
-            <option value="death">1. DEATH / BLACK METAL</option>
-            <option value="grunge">6. GRUNGE (ALICE IN CHAINS)</option>
-            <option value="urbano">4. ROCK URBANO / PUNK</option>
+            <option value="thrash">⚡ THRASH (GUITARRAS AL FRENTE)</option>
+            <option value="death">💀 DEATH METAL (MURO DE SONIDO)</option>
+            <option value="grunge">🌧️ GRUNGE (ALICE IN CHAINS STYLE)</option>
         </select>
-
-        <div id="status">⚡ PROCESANDO AUDIO... NO CIERRES ⚡</div>
-        <button id="btn-detonar">DETONAR MÁSTER PRO 💥</button>
-
+        <div id="status">EQUILIBRANDO FRECUENCIAS... 🔥</div>
+        <button id="btn-detonar">DETONAR MÁSTER BALANCEADO 💥</button>
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER PROFESIONAL LISTO</h3>
+            <h3 style="color: #0f0;">MÁSTER NIVEL DISCO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER (.MP3)</a>
+            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER</a>
         </div>
     </div>
 
@@ -51,70 +38,57 @@
         document.getElementById('btn-detonar').onclick = async () => {
             const file = document.getElementById('archivo').files[0];
             if (!file) return alert("Sube el track.");
+            document.getElementById('status').style.display = 'block';
             
-            const status = document.getElementById('status');
-            status.style.display = 'block';
-            
-            // Usamos OfflineAudioContext para que sea mucho más rápido y no dependa de la bocina
             const reader = new FileReader();
             reader.onload = async (e) => {
-                const arrayBuffer = e.target.result;
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const decodedData = await audioCtx.decodeAudioData(arrayBuffer);
-                
+                const decodedData = await audioCtx.decodeAudioData(e.target.result);
                 const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
                 
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // --- CADENA DE ESTUDIO ---
-                const eq = offlineCtx.createBiquadFilter();
-                eq.type = "highshelf"; eq.frequency.value = 5000; eq.gain.value = 12;
+                // --- FILTROS DE PRECISIÓN ---
+                
+                // 1. CONTROL DE PLATILLOS (High Shelf moderado)
+                const cymbals = offlineCtx.createBiquadFilter();
+                cymbals.type = "highshelf"; cymbals.frequency.value = 8000; cymbals.gain.value = 5; // Bajamos de 12 a 5 para que no tapen
 
+                // 2. EMPUJE DE GUITARRAS (Presencia en medios)
+                const guitars = offlineCtx.createBiquadFilter();
+                guitars.type = "peaking"; guitars.frequency.value = 2500; guitars.gain.value = 8; // Aquí es donde ruge el Marshall
+
+                // 3. COMPRESOR DE IMPACTO
                 const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -22; comp.ratio.value = 12;
+                comp.threshold.value = -20; comp.ratio.value = 10; comp.attack.value = 0.01;
 
                 const gain = offlineCtx.createGain();
-                gain.gain.value = 3.0;
+                gain.gain.value = 3.2;
 
-                source.connect(eq); eq.connect(comp); comp.connect(gain); gain.connect(offlineCtx.destination);
+                source.connect(cymbals); cymbals.connect(guitars); guitars.connect(comp); comp.connect(gain); gain.connect(offlineCtx.destination);
                 
                 source.start(0);
-                
-                // El renderizado offline es casi instantáneo
                 const renderedBuffer = await offlineCtx.startRendering();
-                
-                // Convertir a WAV/MP3 rápido
                 const blob = bufferToWave(renderedBuffer, renderedBuffer.length);
-                const url = URL.createObjectURL(blob);
                 
-                document.getElementById('reproductor').src = url;
-                document.getElementById('link-descarga').href = url;
-                document.getElementById('link-descarga').download = "Master_Arsenal_Final.wav";
+                document.getElementById('reproductor').src = URL.createObjectURL(blob);
+                document.getElementById('link-descarga').href = URL.createObjectURL(blob);
+                document.getElementById('link-descarga').download = "Master_Equilibrado.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
-                status.style.display = 'none';
-                alert("¡DETONACIÓN COMPLETADA!");
+                document.getElementById('status').style.display = 'none';
             };
             reader.readAsArrayBuffer(file);
         };
 
-        // Función para crear el archivo sin trabar el navegador
         function bufferToWave(abuffer, len) {
-            let numOfChan = abuffer.numberOfChannels,
-                length = len * numOfChan * 2 + 44,
-                buffer = new ArrayBuffer(length),
-                view = new DataView(buffer),
-                channels = [], i, sample,
-                offset = 0,
-                pos = 0;
-
-            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
-            setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
-            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan);
-            setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
-
-            for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
-
+            let numOfChan = abuffer.numberOfChannels, length = len * numOfChan * 2 + 44, buffer = new ArrayBuffer(length), view = new DataView(buffer),
+                channels = [], i, sample, offset = 0, pos = 0;
+            const setUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
+            const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
+            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157); setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan); setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
+            for(i = 0; i < numOfChan; i++) channels.push(abuffer.getChannelData(i));
             while(pos < length) {
                 for(i = 0; i < numOfChan; i++) {
                     sample = Math.max(-1, Math.min(1, channels[i][offset]));
@@ -124,8 +98,6 @@
                 offset++;
             }
             return new Blob([buffer], {type: "audio/wav"});
-            function setUint16(data) { view.setUint16(pos, data, true); pos += 2; }
-            function setUint32(data) { view.setUint32(pos, data, true); pos += 4; }
         }
     </script>
 </body>
