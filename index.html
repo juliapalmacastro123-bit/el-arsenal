@@ -4,145 +4,131 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666</title>
+    <title>EL ARSENAL 666 - ESTUDIO PROFESIONAL</title>
     <style>
-        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; box-sizing: border-box; overflow-x: hidden; min-height: 100vh; position: relative; }
-        
-        /* EL BUNKER */
-        #bunker { 
-            border: 3px solid #f00; padding: 15px; box-shadow: 0 0 25px #f00; 
-            display: inline-block; background: #050505; border-radius: 12px; 
-            width: 100%; max-width: 380px; margin-top: 5px; box-sizing: border-box;
-        }
-
-        h1 { color: #fff; text-shadow: 2px 2px #f00; font-size: 1.7rem; margin: 10px 0; letter-spacing: 2px; }
-        
-        /* TABLA DE PRECIOS COMPLETA */
+        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; box-sizing: border-box; overflow-x: hidden; }
+        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; margin-top: 5px; }
+        h1 { color: #fff; text-shadow: 3px 3px #f00; font-size: 1.8rem; margin: 10px 0; letter-spacing: 2px; }
         .precios { margin: 10px 0; font-size: 0.75rem; color: #0f0; border-collapse: collapse; width: 100%; }
         .precios th { color: #fff; border-bottom: 2px solid #f00; padding: 6px; background: #1a0000; }
         .precios td { border: 1px solid #222; padding: 8px; }
-        
-        .btn-pago { 
-            background: #0f0; color: #000; padding: 15px; font-size: 1rem; 
-            font-weight: bold; text-decoration: none; display: block; 
-            margin: 10px auto; border-radius: 8px; border: 2px solid #fff; 
-            text-transform: uppercase;
-        }
-
-        select, input[type="file"], button { 
-            background: #000; color: #f00; border: 2px solid #f00; 
-            padding: 12px; font-weight: bold; width: 100%; margin-bottom: 12px; 
-            box-sizing: border-box; font-size: 0.85rem; border-radius: 5px;
-        }
-
-        button { 
-            background: #f00; color: #000; cursor: pointer; border: none;
-            box-shadow: 0 5px #800; font-size: 1.1rem; text-transform: uppercase;
-        }
-
-        /* MARCA DE AGUA (PENTAGRAMA) */
-        #erick-key { 
-            position: fixed; bottom: 0; right: 0; width: 60px; height: 60px; 
-            cursor: pointer; opacity: 0.25; z-index: 1000; padding: 5px;
-        }
-        #erick-key svg { fill: #800; width: 100%; height: 100%; }
-
-        #descarga-zona { display: none; margin-top: 20px; border-top: 2px dashed #0f0; padding-top: 15px; }
-        .btn-download { background: #0f0; color: #000; padding: 15px; text-decoration: none; font-weight: bold; display: block; margin-top: 10px; border-radius: 5px; }
+        .btn-pago { background: #0f0; color: #000; padding: 15px; font-weight: bold; text-decoration: none; display: block; margin: 10px auto; border-radius: 8px; border: 2px solid #fff; text-transform: uppercase; }
+        select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 12px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; font-size: 0.85rem; }
+        button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
+        #erick-key { position: fixed; bottom: 0; right: 0; width: 60px; height: 60px; cursor: pointer; opacity: 0.3; z-index: 1000; }
+        #erick-key svg { fill: #f00; width: 100%; height: 100%; }
+        #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
+        .btn-download { background: #0f0; color: #000; padding: 15px; text-decoration: none; font-weight: bold; display: block; border-radius: 5px; }
+        #status { color: #0f0; display: none; margin: 10px 0; font-weight: bold; }
     </style>
 </head>
 <body translate="no">
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        
         <table class="precios">
-            <tr><th>PRODUCTO</th><th>MEX</th><th>GLOBAL</th></tr>
+            <tr><th>PRODUCTO</th><th>MEX</th><th>USD</th></tr>
             <tr><td>1 SONG MASTER</td><td>$100</td><td>$20</td></tr>
             <tr style="color: #0ff;"><td>6 SONGS (EP)</td><td>$400</td><td>$75</td></tr>
             <tr style="color: #ff0;"><td>8 SONGS (ALBUM)</td><td>$500</td><td>$95</td></tr>
         </table>
-
-        <div id="zona-pago">
-            <a href="https://link.mercadopago.com.mx/elarsenalerick" target="_blank" class="btn-pago">💰 PAGA AQUÍ / PAY HERE</a>
-        </div>
-
+        
+        <div id="zona-pago"><a href="https://link.mercadopago.com.mx/elarsenalerick" target="_blank" class="btn-pago">💰 PAGA AQUÍ</a></div>
+        
         <input type="file" id="archivo" accept="audio/*">
         
         <select id="genero">
-            <option>1. DEATH / BLACK METAL</option>
-            <option>2. THRASH / SPEED</option>
-            <option>3. HEAVY METAL</option>
-            <option>4. ROCK URBANO / PUNK</option>
-            <option>5. POST-PUNK / DARK WAVE</option>
-            <option>6. GRUNGE</option>
-            <option>7. ALTERNATIVE ROCK</option>
-            <option>8. SKA / SKA-PUNK</option>
-            <option>9. INDIE / MYSTIC</option>
-            <option>10. BLUES / HARD ROCK</option>
+            <option value="death">1. DEATH / BLACK METAL (BRUTAL)</option>
+            <option value="thrash">2. THRASH / SPEED (MEGADETH)</option>
+            <option value="heavy">3. HEAVY METAL (STACK)</option>
+            <option value="urbano">4. ROCK URBANO / PUNK (CALLE)</option>
+            <option value="dark">5. POST-PUNK / DARK WAVE (COLD)</option>
+            <option value="grunge">6. GRUNGE (ALICE IN CHAINS)</option>
+            <option value="alt">7. ALTERNATIVE ROCK (CLEAN)</option>
+            <option value="ska">8. SKA / SKA-PUNK (BRIGHT)</option>
+            <option value="indie">9. INDIE / MYSTIC (AIR)</option>
+            <option value="blues">10. BLUES / HARD ROCK (TUBE)</option>
         </select>
 
-        <button id="btn-detonar">DETONAR MÁSTER! 💥</button>
+        <div id="status">DETONANDO ESTUDIO... 🔥</div>
+        <button id="btn-detonar">DETONAR MÁSTER PRO 💥</button>
 
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">LISTO / READY</h3>
+            <h3 style="color: #0f0;">DISCO PROFESIONAL LISTO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
             <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER</a>
         </div>
     </div>
 
-    <div id="erick-key" onclick="accesoErick()">
+    <div id="erick-key" onclick="let c=prompt('FRASE:'); if(c && c.toLowerCase().includes('666')){document.getElementById('zona-pago').style.display='none';alert('MODO MAESTRO ACTIVADO');}">
         <svg viewBox="0 0 100 100"><path d="M50 5 L63 38 L95 38 L69 59 L79 92 L50 72 L21 92 L31 59 L5 38 L37 38 Z"/></svg>
     </div>
 
     <script>
-        function accesoErick() {
-            const clave = prompt("DI LA FRASE:");
-            if (clave && clave.toLowerCase().includes("abreme esta mierda 666")) {
-                document.getElementById('zona-pago').style.display = 'none';
-                alert("MODO MAESTRO ACTIVADO.");
-            }
-        }
-
         document.getElementById('btn-detonar').onclick = async () => {
             const file = document.getElementById('archivo').files[0];
+            const sel = document.getElementById('genero').value;
             if (!file) return alert("Sube el track.");
+            
+            document.getElementById('status').style.display = 'block';
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const reader = new FileReader();
+            
             reader.onload = async (e) => {
                 const buffer = await audioCtx.decodeAudioData(e.target.result);
                 const source = audioCtx.createBufferSource();
                 source.buffer = buffer;
-                
-                // Efectos de Masterización
-                const eq = audioCtx.createBiquadFilter();
-                eq.type = "highshelf"; eq.frequency.value = 5000; eq.gain.value = 10;
-                
-                const comp = audioCtx.createDynamicsCompressor();
-                comp.threshold.value = -14; comp.ratio.value = 12;
-                
-                const gain = audioCtx.createGain();
-                gain.gain.value = 3.2;
 
-                source.connect(eq); eq.connect(comp); comp.connect(gain); gain.connect(audioCtx.destination);
-                
+                // --- ALGORITMOS POR GÉNERO ---
+                let highs = 8, mids = 5, compThres = -20, compRatio = 12, drive = 40;
+
+                if(sel === 'death') { highs=15; mids=10; compThres=-28; compRatio=20; drive=85; }
+                if(sel === 'thrash') { highs=12; mids=12; compThres=-24; compRatio=16; drive=65; }
+                if(sel === 'grunge') { highs=6; mids=15; compThres=-22; compRatio=14; drive=55; }
+                if(sel === 'ska') { highs=18; mids=4; compThres=-18; compRatio=10; drive=20; }
+                if(sel === 'urbano') { highs=10; mids=8; compThres=-20; compRatio=12; drive=45; }
+                if(sel === 'blues') { highs=6; mids=6; compThres=-15; compRatio=6; drive=25; }
+
+                const eqHigh = audioCtx.createBiquadFilter();
+                eqHigh.type = "highshelf"; eqHigh.frequency.value = 6000; eqHigh.gain.value = highs;
+
+                const eqMid = audioCtx.createBiquadFilter();
+                eqMid.type = "peaking"; eqMid.frequency.value = 3000; eqMid.gain.value = mids;
+
+                const tube = audioCtx.createWaveShaper();
+                const makeCurve = (amt) => {
+                    let k = amt, n = 44100, curve = new Float32Array(n);
+                    for (let i = 0; i < n; ++i) {
+                        let x = i * 2 / n - 1;
+                        curve[i] = (3+k)*x*20*(Math.PI/180)/(Math.PI+k*Math.abs(x));
+                    }
+                    return curve;
+                };
+                tube.curve = makeCurve(drive);
+
+                const comp = audioCtx.createDynamicsCompressor();
+                comp.threshold.value = compThres; comp.ratio.value = compRatio;
+                comp.attack.value = 0.003;
+
+                const finalGain = audioCtx.createGain();
+                finalGain.gain.value = 3.6;
+
                 const dest = audioCtx.createMediaStreamDestination();
-                gain.connect(dest);
+                source.connect(eqHigh); eqHigh.connect(eqMid); eqMid.connect(tube); tube.connect(comp); comp.connect(finalGain); finalGain.connect(dest);
+
                 const recorder = new MediaRecorder(dest.stream);
                 const chunks = [];
-                
                 recorder.ondataavailable = ev => chunks.push(ev.data);
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: 'audio/mp3' });
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('reproductor').src = url;
-                    document.getElementById('link-descarga').href = url;
-                    document.getElementById('link-descarga').download = "Master_Arsenal.mp3";
+                    document.getElementById('reproductor').src = URL.createObjectURL(blob);
+                    document.getElementById('link-descarga').href = URL.createObjectURL(blob);
+                    document.getElementById('link-descarga').download = "Arsenal_Studio_Master.mp3";
                     document.getElementById('descarga-zona').style.display = 'block';
+                    document.getElementById('status').style.display = 'none';
                 };
                 
-                recorder.start();
-                source.start(0);
+                recorder.start(); source.start(0);
                 source.onended = () => recorder.stop();
             };
             reader.readAsArrayBuffer(file);
@@ -150,5 +136,3 @@
     </script>
 </body>
 </html>
-
-                                     
