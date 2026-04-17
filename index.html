@@ -3,69 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - HARD RESET</title>
+    <title>EL ARSENAL: LA METAMORFOSIS DEL SONIDO</title>
     <style>
-        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
-        #bunker { border: 5px solid #f00; padding: 20px; background: #050505; border-radius: 15px; display: inline-block; width: 100%; max-width: 400px; }
-        h1 { color: #fff; text-shadow: 0 0 10px #f00; }
-        input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; width: 100%; margin: 10px 0; font-weight: bold; border-radius: 8px; }
-        button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; }
-        #descarga-zona { display: none; margin-top: 20px; border-top: 2px dashed #0f0; padding-top: 20px; }
+        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
+        #bunker { border: 4px double #f00; padding: 20px; box-shadow: 0 0 50px #f00; display: inline-block; background: #050505; border-radius: 15px; width: 100%; max-width: 420px; }
+        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 5px 0; font-size: 1.3rem; }
+        h2 { color: #0f0; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase; }
+        
+        #caja-cobro { background: #111; border: 2px solid #0f0; padding: 15px; margin: 15px 0; border-radius: 10px; }
+        .monto { color: #0f0; font-size: 1.5rem; font-weight: bold; text-shadow: 0 0 10px #0f0; }
+        .btn-pagar { background: #0f0; color: #000; padding: 12px; border: none; font-weight: bold; width: 100%; cursor: pointer; border-radius: 5px; margin-top: 10px; text-decoration: none; display: block; }
+        
+        #vpn-alert { display: none; color: #fff; background: #f00; padding: 10px; font-weight: bold; border: 2px solid #fff; margin-bottom: 15px; }
+        
+        select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
+        #btn-detonar { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 6px #600; border: none; }
+        #descarga-zona { display: none; margin-top: 20px; border-top: 5px double #0f0; padding-top: 15px; }
+        .btn-download { background: #0f0; color: #000; padding: 18px; text-decoration: none; font-weight: bold; display: block; border-radius: 10px; border: 2px solid #fff; }
     </style>
 </head>
-<body>
+<body translate="no">
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p style="color:#0f0;">MODO: LIMPIEZA TOTAL DE SISEO</p>
+        <h2>LA METAMORFOSIS DEL SONIDO</h2>
         
+        <div id="vpn-alert">⚠️ ACCESO RESTRINGIDO: SOLO TERRITORIO NACIONAL (MX) ⚠️</div>
+
+        <select id="genero" onchange="actualizarCosto()">
+            <option value="thrash" data-costo="850">🔥 THRASH (MEGADETH STYLE) - $850</option>
+            <option value="death" data-costo="950">💀 DEATH METAL (PRO MASTER) - $950</option>
+            <option value="industrial" data-costo="1000">⚙️ INDUSTRIAL (NIN STYLE) - $1000</option>
+            <option value="rock" data-costo="600">⚡ ROCK N' ROLL (ACDC STYLE) - $600</option>
+        </select>
+
+        <div id="caja-cobro">
+            <div class="monto" id="monto-final">$850.00 MXN</div>
+            <a href="#" class="btn-pagar" id="link-pago">💳 PAGAR (SOLO MÉXICO)</a>
+        </div>
+
         <input type="file" id="archivo" accept="audio/*">
-        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
+        <button id="btn-detonar">DETONAR MÁSTER 💥</button>
         
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">AUDIO PULIDO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" style="background:#0f0; color:#000; padding:15px; text-decoration:none; display:block; border-radius:5px; font-weight:bold; margin-top:10px;">📥 DESCARGAR MÁSTER</a>
+            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER FINAL</a>
         </div>
     </div>
 
     <script>
+        // --- SEGURIDAD ANTI-VPN / ANTI-GABACHO ---
+        function checkSecurity() {
+            const isEnglish = navigator.language.startsWith('en');
+            const isNotMXTime = !Intl.DateTimeFormat().resolvedOptions().timeZone.includes('Mexico');
+            
+            if (isEnglish || isNotMXTime) {
+                document.getElementById('vpn-alert').style.display = 'block';
+                document.getElementById('btn-detonar').disabled = true;
+                document.getElementById('btn-detonar').style.opacity = '0.3';
+                document.getElementById('link-pago').innerText = "BLOQUEADO: NO DISPONIBLE EN TU REGIÓN";
+                return false;
+            }
+            return true;
+        }
+
+        window.onload = checkSecurity;
+
+        function actualizarCosto() {
+            const select = document.getElementById('genero');
+            const costo = select.options[select.selectedIndex].getAttribute('data-costo');
+            document.getElementById('monto-final').innerText = `$${costo}.00 MXN`;
+            document.getElementById('link-pago').href = `https://www.mercadopago.com.mx/checkout/v1/redirect?pref_id=TU_PREF_${costo}`;
+        }
+
         document.getElementById('btn-detonar').onclick = async () => {
+            if (!checkSecurity()) return alert("Solo clientes en México.");
+            
             const file = document.getElementById('archivo').files[0];
             if (!file) return alert("Sube el track.");
             
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const reader = new FileReader();
-            
             reader.onload = async (e) => {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const decodedData = await audioCtx.decodeAudioData(e.target.result);
-                // FORZAMOS EL SAMPLE RATE PARA EVITAR LENTITUD
                 const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
                 
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // --- FILTRO DE LIMPIEZA EXTREMA ---
-                const hiCut = offlineCtx.createBiquadFilter();
-                hiCut.type = "lowpass";
-                hiCut.frequency.value = 7500; // Bajamos el techo para matar el siseo de "tapas de olla"
-
-                const notch = offlineCtx.createBiquadFilter();
-                notch.type = "notch";
-                notch.frequency.value = 4000; // Quitamos el sonido metálico feo
-                notch.Q.value = 3.0;
-
-                const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -30;
-                comp.ratio.value = 12;
+                // --- CADENA PROFESIONAL (HI-HAT TIGHT + MARSHALL) ---
+                const hiHatFix = offlineCtx.createBiquadFilter();
+                hiHatFix.type = "highpass"; hiHatFix.frequency.value = 450; 
+                const antiLata = offlineCtx.createBiquadFilter();
+                antiLata.type = "notch"; antiLata.frequency.value = 3800; antiLata.Q.value = 4.0;
+                
+                const limiter = offlineCtx.createDynamicsCompressor();
+                limiter.threshold.value = -38; limiter.ratio.value = 20;
 
                 const gain = offlineCtx.createGain();
-                gain.gain.value = 4.0;
+                gain.gain.value = 5.0;
 
-                source.connect(hiCut);
-                hiCut.connect(notch);
-                notch.connect(comp);
-                comp.connect(gain);
+                source.connect(hiHatFix); hiHatFix.connect(antiLata);
+                antiLata.connect(limiter); limiter.connect(gain);
                 gain.connect(offlineCtx.destination);
                 
                 source.start(0);
@@ -74,7 +113,7 @@
                 
                 document.getElementById('reproductor').src = URL.createObjectURL(blob);
                 document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Arsenal_Fix_Final.wav";
+                document.getElementById('link-descarga').download = "Master_Arsenal_MX.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
             };
             reader.readAsArrayBuffer(file);
