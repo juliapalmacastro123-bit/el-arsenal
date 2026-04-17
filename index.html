@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - GUITAR FOCUS</title>
+    <title>EL ARSENAL 666 - DEFINITIVE BALANCE</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
         #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
@@ -19,14 +19,13 @@
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
+        <p style="color:#0f0; font-size:0.8rem;">RECORTE QUIRÚRGICO DE PLATILLOS (-30%)</p>
         <input type="file" id="archivo" accept="audio/*">
         <select id="genero">
-            <option value="thrash">⚡ THRASH (GUITARRAS AL FRENTE)</option>
-            <option value="death">💀 DEATH METAL (MURO DE SONIDO)</option>
-            <option value="grunge">🌧️ GRUNGE (ALICE IN CHAINS STYLE)</option>
+            <option value="pro">🔥 MÁSTER PRO (CONTROL TOTAL)</option>
         </select>
-        <div id="status">EQUILIBRANDO FRECUENCIAS... 🔥</div>
-        <button id="btn-detonar">DETONAR MÁSTER BALANCEADO 💥</button>
+        <div id="status">DOMANDO EL METAL... 🔥</div>
+        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
         <div id="descarga-zona">
             <h3 style="color: #0f0;">MÁSTER NIVEL DISCO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
@@ -49,24 +48,42 @@
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // --- FILTROS DE PRECISIÓN ---
-                
-                // 1. CONTROL DE PLATILLOS (High Shelf moderado)
-                const cymbals = offlineCtx.createBiquadFilter();
-                cymbals.type = "highshelf"; cymbals.frequency.value = 8000; cymbals.gain.value = 5; // Bajamos de 12 a 5 para que no tapen
+                // 1. RECORTE DE CHILLIDO (Notch Filter)
+                // Vamos directo a la frecuencia donde el platillo estorba
+                const notch = offlineCtx.createBiquadFilter();
+                notch.type = "notch";
+                notch.frequency.value = 6500;
+                notch.Q.value = 1.0;
 
-                // 2. EMPUJE DE GUITARRAS (Presencia en medios)
-                const guitars = offlineCtx.createBiquadFilter();
-                guitars.type = "peaking"; guitars.frequency.value = 2500; guitars.gain.value = 8; // Aquí es donde ruge el Marshall
+                // 2. CORTE DE AIRE (High Shelf Negativo)
+                // Bajamos ese 30% de brillo excesivo que mencionas
+                const shelf = offlineCtx.createBiquadFilter();
+                shelf.type = "highshelf";
+                shelf.frequency.value = 8000;
+                shelf.gain.value = -6; // Atenuación controlada
 
-                // 3. COMPRESOR DE IMPACTO
+                // 3. PRESENCIA DE GUITARRAS Y VOZ
+                const presence = offlineCtx.createBiquadFilter();
+                presence.type = "peaking";
+                presence.frequency.value = 2800;
+                presence.gain.value = 12; // Le damos el poder a lo que importa
+
+                // 4. COMPRESIÓN FINAL (Glue)
                 const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -20; comp.ratio.value = 10; comp.attack.value = 0.01;
+                comp.threshold.value = -22;
+                comp.ratio.value = 14;
+                comp.attack.value = 0.002;
 
                 const gain = offlineCtx.createGain();
-                gain.gain.value = 3.2;
+                gain.gain.value = 3.8;
 
-                source.connect(cymbals); cymbals.connect(guitars); guitars.connect(comp); comp.connect(gain); gain.connect(offlineCtx.destination);
+                // CADENA: Source -> Notch -> Shelf -> Presence -> Comp -> Gain
+                source.connect(notch);
+                notch.connect(shelf);
+                shelf.connect(presence);
+                presence.connect(comp);
+                comp.connect(gain);
+                gain.connect(offlineCtx.destination);
                 
                 source.start(0);
                 const renderedBuffer = await offlineCtx.startRendering();
@@ -74,7 +91,7 @@
                 
                 document.getElementById('reproductor').src = URL.createObjectURL(blob);
                 document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Master_Equilibrado.wav";
+                document.getElementById('link-descarga').download = "Master_Final_Arsenal.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
                 document.getElementById('status').style.display = 'none';
             };
