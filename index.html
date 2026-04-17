@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - REAL TIME MASTER</title>
+    <title>EL ARSENAL 666 - ZERO LAG</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
         #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 35px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
@@ -18,11 +18,11 @@
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p style="color:#0f0; font-size:0.7rem;">MODO: VELOCIDAD GARANTIZADA</p>
+        <p style="color:#0f0; font-size:0.75rem;">FIX: VELOCIDAD Y MARCAS PRO</p>
         
         <input type="file" id="archivo" accept="audio/*">
         
-        <div id="status">DETONANDO MASTER... 🔥</div>
+        <div id="status">PULIENDO AUDIO... 🔥</div>
         
         <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
         
@@ -39,51 +39,77 @@
             if (!file) return alert("Sube el track.");
             document.getElementById('status').style.display = 'block';
             
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const reader = new FileReader();
-            
             reader.onload = async (e) => {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const decodedData = await audioCtx.decodeAudioData(e.target.result);
                 
-                // --- PROCESO EN TIEMPO REAL PARA EVITAR ERROR DE VELOCIDAD ---
-                const source = audioCtx.createBufferSource();
+                // USAR EL SAMPLE RATE ORIGINAL ES LO QUE EVITA QUE SE ESCUCHE LENTO
+                const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
+                
+                const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                const jcm = audioCtx.createBiquadFilter();
-                jcm.type = "peaking"; jcm.frequency.value = 2500; jcm.gain.value = 10;
+                // Marshall Mid-Boost (Guitarras)
+                const marshall = offlineCtx.createBiquadFilter();
+                marshall.type = "peaking"; marshall.frequency.value = 2500; marshall.gain.value = 8;
 
-                const lowEnd = audioCtx.createBiquadFilter();
-                lowEnd.type = "peaking"; lowEnd.frequency.value = 80; lowEnd.gain.value = 8;
+                // Tama Kick (Bombo)
+                const tama = offlineCtx.createBiquadFilter();
+                tama.type = "peaking"; tama.frequency.value = 80; tama.gain.value = 6;
 
-                const rudeCut = audioCtx.createBiquadFilter();
-                rudeCut.type = "lowpass"; rudeCut.frequency.value = 8500;
+                // Paiste Rude Tamer (Domar platillos)
+                const rude = offlineCtx.createBiquadFilter();
+                rude.type = "lowpass"; rude.frequency.value = 8500;
 
-                const comp = audioCtx.createDynamicsCompressor();
+                // Master Glue (Compresor para que suene a disco)
+                const comp = offlineCtx.createDynamicsCompressor();
                 comp.threshold.value = -25; comp.ratio.value = 12;
 
-                const dest = audioCtx.createMediaStreamDestination();
-                source.connect(jcm); jcm.connect(lowEnd); lowEnd.connect(rudeCut); rudeCut.connect(comp); comp.connect(dest);
+                const gain = offlineCtx.createGain();
+                gain.gain.value = 3.2;
 
-                const recorder = new MediaRecorder(dest.stream);
-                const chunks = [];
-                recorder.ondataavailable = ev => chunks.push(ev.data);
-                recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'audio/wav' });
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('reproductor').src = url;
-                    document.getElementById('link-descarga').href = url;
-                    document.getElementById('link-descarga').download = "Master_Erick_Final.wav";
-                    document.getElementById('descarga-zona').style.display = 'block';
-                    document.getElementById('status').style.display = 'none';
-                    alert("¡TERMINADO!");
-                };
-
-                recorder.start();
+                source.connect(marshall);
+                marshall.connect(tama);
+                tama.connect(rude);
+                rude.connect(comp);
+                comp.connect(gain);
+                gain.connect(offlineCtx.destination);
+                
                 source.start(0);
-                source.onended = () => { recorder.stop(); audioCtx.close(); };
+                const renderedBuffer = await offlineCtx.startRendering();
+                
+                // Convertir a WAV directamente
+                const blob = bufferToWave(renderedBuffer, renderedBuffer.length);
+                const url = URL.createObjectURL(blob);
+                
+                document.getElementById('reproductor').src = url;
+                document.getElementById('link-descarga').href = url;
+                document.getElementById('link-descarga').download = "Master_Erick_Arsenal.wav";
+                document.getElementById('descarga-zona').style.display = 'block';
+                document.getElementById('status').style.display = 'none';
             };
             reader.readAsArrayBuffer(file);
         };
+
+        function bufferToWave(abuffer, len) {
+            let numOfChan = abuffer.numberOfChannels, length = len * numOfChan * 2 + 44, buffer = new ArrayBuffer(length), view = new DataView(buffer),
+                channels = [], i, sample, offset = 0, pos = 0;
+            const setUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
+            const setUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
+            setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157); setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
+            setUint32(abuffer.sampleRate); setUint32(abuffer.sampleRate * 2 * numOfChan); setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164); setUint32(length - pos - 4);
+            for(i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
+            while(pos < length) {
+                for(i = 0; i < numOfChan; i++) {
+                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+                    view.setInt16(pos, sample, true); pos += 2;
+                }
+                offset++;
+            }
+            return new Blob([buffer], {type: "audio/wav"});
+        }
     </script>
 </body>
 </html>
