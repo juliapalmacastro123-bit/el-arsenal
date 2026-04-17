@@ -3,37 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - ANTI-VICIO ENGINE</title>
+    <title>EL ARSENAL 666 - HARD RESET</title>
     <style>
-        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
-        #bunker { border: 4px double #f00; padding: 20px; box-shadow: 0 0 50px #f00; display: inline-block; background: #050505; border-radius: 15px; width: 100%; max-width: 420px; }
-        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 5px 0; }
-        select, input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
-        button { background: #f00; color: #000; cursor: pointer; font-size: 1.3rem; box-shadow: 0 6px #600; border: none; }
-        #descarga-zona { display: none; margin-top: 20px; border-top: 5px double #0f0; padding-top: 15px; }
-        .btn-download { background: #0f0; color: #000; padding: 18px; text-decoration: none; font-weight: bold; display: block; border-radius: 10px; border: 2px solid #fff; }
+        body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 20px; }
+        #bunker { border: 5px solid #f00; padding: 20px; background: #050505; border-radius: 15px; display: inline-block; width: 100%; max-width: 400px; }
+        h1 { color: #fff; text-shadow: 0 0 10px #f00; }
+        input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; width: 100%; margin: 10px 0; font-weight: bold; border-radius: 8px; }
+        button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; }
+        #descarga-zona { display: none; margin-top: 20px; border-top: 2px dashed #0f0; padding-top: 20px; }
     </style>
 </head>
-<body translate="no">
+<body>
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p style="color:#0f0; font-size:0.7rem;">ELIMINADOR DE VICIO Y SISEO DIGITAL</p>
+        <p style="color:#0f0;">MODO: LIMPIEZA TOTAL DE SISEO</p>
         
-        <select id="genero">
-            <option value="thrash">🔥 THRASH (LIMPIEZA QUIRÚRGICA)</option>
-            <option value="death">💀 DEATH METAL (PODER BRUTO)</option>
-            <option value="grunge">🎸 GRUNGE (ATAQUE SECO)</option>
-            <option value="heavy">⛓️ HEAVY CLASSIC (PODER TRADICIONAL)</option>
-        </select>
-
         <input type="file" id="archivo" accept="audio/*">
-        <button id="btn-detonar">DETONAR MÁSTER LIMPIO 💥</button>
+        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
         
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER SIN VICIO LISTO</h3>
+            <h3 style="color: #0f0;">AUDIO PULIDO</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER .WAV</a>
+            <a id="link-descarga" style="background:#0f0; color:#000; padding:15px; text-decoration:none; display:block; border-radius:5px; font-weight:bold; margin-top:10px;">📥 DESCARGAR MÁSTER</a>
         </div>
     </div>
 
@@ -41,48 +33,38 @@
         document.getElementById('btn-detonar').onclick = async () => {
             const file = document.getElementById('archivo').files[0];
             if (!file) return alert("Sube el track.");
-            document.getElementById('status').style.display = 'block';
             
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const reader = new FileReader();
+            
             reader.onload = async (e) => {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const decodedData = await audioCtx.decodeAudioData(e.target.result);
+                // FORZAMOS EL SAMPLE RATE PARA EVITAR LENTITUD
                 const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
                 
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // --- 1. FILTRO ANTI-VICIO (Corte de siseo metálico) ---
+                // --- FILTRO DE LIMPIEZA EXTREMA ---
                 const hiCut = offlineCtx.createBiquadFilter();
                 hiCut.type = "lowpass";
-                hiCut.frequency.value = 8500; // Nada de siseo por encima de 8.5kHz
+                hiCut.frequency.value = 7500; // Bajamos el techo para matar el siseo de "tapas de olla"
 
-                // --- 2. NOTCH ANTI-LATAS (Corte quirúrgico en 4.5kHz) ---
                 const notch = offlineCtx.createBiquadFilter();
                 notch.type = "notch";
-                notch.frequency.value = 4500;
-                notch.Q.value = 4.0;
+                notch.frequency.value = 4000; // Quitamos el sonido metálico feo
+                notch.Q.value = 3.0;
 
-                // --- 3. EXCITADOR DE MEDIOS (Cuerpo de Marshall) ---
-                const mids = offlineCtx.createBiquadFilter();
-                mids.type = "peaking";
-                mids.frequency.value = 2500;
-                mids.gain.value = 10;
-
-                // --- 4. COMPRESOR DE HI-HATS (Cerrado y Seco) ---
                 const comp = offlineCtx.createDynamicsCompressor();
-                comp.threshold.value = -35; 
-                comp.ratio.value = 20; 
-                comp.attack.value = 0.0001; // Aplasta el vicio al instante
-                comp.knee.value = 0;
+                comp.threshold.value = -30;
+                comp.ratio.value = 12;
 
                 const gain = offlineCtx.createGain();
-                gain.gain.value = 4.8;
+                gain.gain.value = 4.0;
 
                 source.connect(hiCut);
                 hiCut.connect(notch);
-                notch.connect(mids);
-                mids.connect(comp);
+                notch.connect(comp);
                 comp.connect(gain);
                 gain.connect(offlineCtx.destination);
                 
@@ -92,7 +74,7 @@
                 
                 document.getElementById('reproductor').src = URL.createObjectURL(blob);
                 document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Master_Sin_Vicio.wav";
+                document.getElementById('link-descarga').download = "Arsenal_Fix_Final.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
             };
             reader.readAsArrayBuffer(file);
