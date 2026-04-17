@@ -3,98 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EL ARSENAL 666 - PLATINUM STUDIO</title>
+    <title>EL ARSENAL 666 - SYNC MASTER</title>
     <style>
         body { background: #000; color: #f00; font-family: 'Courier New', monospace; text-align: center; padding: 10px; margin: 0; }
-        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 50px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; border-style: double; }
-        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; letter-spacing: 3px; }
-        p { font-size: 0.7rem; color: #0f0; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; }
+        #bunker { border: 3px solid #f00; padding: 15px; box-shadow: 0 0 30px #f00; display: inline-block; background: #050505; border-radius: 12px; width: 100%; max-width: 400px; }
+        h1 { color: #fff; text-shadow: 2px 2px #f00; margin: 10px 0; }
+        p { font-size: 0.7rem; color: #0f0; margin-bottom: 10px; }
         input, button { background: #000; color: #f00; border: 2px solid #f00; padding: 15px; font-weight: bold; width: 100%; margin-bottom: 12px; border-radius: 5px; box-sizing: border-box; }
-        button { background: #f00; color: #000; cursor: pointer; font-size: 1.3rem; box-shadow: 0 6px #600; border: none; }
-        #status { color: #fff; background: #a00; display: none; padding: 10px; margin: 10px 0; font-weight: bold; border-radius: 4px; animation: glow 1s infinite alternate; }
-        @keyframes glow { from { box-shadow: 0 0 5px #fff; } to { box-shadow: 0 0 20px #f00; } }
-        #descarga-zona { display: none; margin-top: 20px; border-top: 4px double #0f0; padding-top: 15px; }
-        .btn-download { background: #0f0; color: #000; padding: 18px; text-decoration: none; font-weight: bold; display: block; border-radius: 8px; border: 2px solid #fff; font-size: 1.1rem; }
+        button { background: #f00; color: #000; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px #800; border: none; }
+        #status { color: #fff; background: #800; display: none; padding: 10px; margin: 10px 0; font-weight: bold; }
+        #descarga-zona { display: none; margin-top: 20px; border-top: 3px double #0f0; padding-top: 15px; }
+        .btn-download { background: #0f0; color: #000; padding: 15px; text-decoration: none; font-weight: bold; display: block; border-radius: 5px; }
     </style>
 </head>
 <body translate="no">
 
     <div id="bunker">
         <h1>🎸 EL ARSENAL 🤘</h1>
-        <p>Marshall JCM • Ampeg SVT • Tama Artstar • Paiste RUDE</p>
+        <p>FIX: VELOCIDAD REAL • MARSHALL • TAMA • PAISTE</p>
         
         <input type="file" id="archivo" accept="audio/*">
         
-        <div id="status">🔥 CALENTANDO BULBOS Y BRONCE... 🔥</div>
+        <div id="status">SINCRONIZANDO Y PULIENDO... 🔥</div>
         
-        <button id="btn-detonar">DETONAR MÁSTER FINAL 💥</button>
+        <button id="btn-detonar">DETONAR MÁSTER SYNC 💥</button>
         
         <div id="descarga-zona">
-            <h3 style="color: #0f0;">MÁSTER DE MARCA LISTO</h3>
+            <h3 style="color: #0f0;">MÁSTER A VELOCIDAD REAL</h3>
             <audio id="reproductor" controls style="width:100%;"></audio>
-            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER PRO</a>
+            <a id="link-descarga" class="btn-download">📥 DESCARGAR MÁSTER .WAV</a>
         </div>
     </div>
 
     <script>
         document.getElementById('btn-detonar').onclick = async () => {
             const file = document.getElementById('archivo').files[0];
-            if (!file) return alert("Sube el track carnal.");
+            if (!file) return alert("Sube el track.");
             document.getElementById('status').style.display = 'block';
             
             const reader = new FileReader();
             reader.onload = async (e) => {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const decodedData = await audioCtx.decodeAudioData(e.target.result);
+                const tempCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const decodedData = await tempCtx.decodeAudioData(e.target.result);
+                
+                // --- AQUÍ ESTÁ EL TRUCO: Usar el SampleRate exacto del archivo ---
                 const offlineCtx = new OfflineAudioContext(decodedData.numberOfChannels, decodedData.length, decodedData.sampleRate);
                 
                 const source = offlineCtx.createBufferSource();
                 source.buffer = decodedData;
 
-                // --- 1. AMPEG SVT (Cuerpo y Gruñido del Bajo) ---
-                const bassBody = offlineCtx.createBiquadFilter();
-                bassBody.type = "peaking"; bassBody.frequency.value = 100; bassBody.gain.value = 10;
-
-                // --- 2. MARSHALL JCM800 (Saturación de Guitarras) ---
+                // 1. Marshall Saturation (Cuerpo)
                 const jcm = offlineCtx.createWaveShaper();
                 jcm.curve = (function(amount) {
                     let k = amount, n = 44100, curve = new Float32Array(n);
                     for (let i = 0; i < n; ++i) {
                         let x = i * 2 / n - 1;
-                        curve[i] = (3 + k) * x * 25 * (Math.PI / 180) / (Math.PI + k * Math.abs(x));
+                        curve[i] = (3 + k) * x * 15 * (Math.PI / 180) / (Math.PI + k * Math.abs(x));
                     }
                     return curve;
-                })(60);
+                })(40);
 
-                // --- 3. TAMA & PAICE RUDE (Ataque y Brillo de Bronce) ---
-                const snareTama = offlineCtx.createBiquadFilter();
-                snareTama.type = "peaking"; snareTama.frequency.value = 3000; snareTama.gain.value = 8;
+                // 2. Tama Kick & Snare
+                const punch = offlineCtx.createBiquadFilter();
+                punch.type = "peaking"; punch.frequency.value = 80; punch.gain.value = 6;
 
-                const rudeCymbals = offlineCtx.createBiquadFilter();
-                rudeCymbals.type = "highshelf"; rudeCymbals.frequency.value = 6000; rudeCymbals.gain.value = -8; // Domados para que no tapen
+                // 3. Paiste Rude Cut (Domando platillos)
+                const rude = offlineCtx.createBiquadFilter();
+                rude.type = "lowpass"; rude.frequency.value = 8000;
 
-                const sparkle = offlineCtx.createBiquadFilter();
-                sparkle.type = "peaking"; sparkle.frequency.value = 4500; sparkle.gain.value = 6; // El rugido del RUDE
+                // 4. Compresión Final
+                const comp = offlineCtx.createDynamicsCompressor();
+                comp.threshold.value = -25; comp.ratio.value = 12;
 
-                // --- 4. MASTER COMPRESSOR & LIMITER (El "Pegamento" Final) ---
-                const limiter = offlineCtx.createDynamicsCompressor();
-                limiter.threshold.value = -32; 
-                limiter.ratio.value = 20;
-                limiter.attack.value = 0.001;
-                limiter.knee.value = 0;
+                const gain = offlineCtx.createGain();
+                gain.gain.value = 3.5;
 
-                const finalGain = offlineCtx.createGain();
-                finalGain.gain.value = 4.5;
-
-                // CADENA: Source -> Ampeg -> Marshall -> Tama -> Rude -> Limiter -> Gain
-                source.connect(bassBody);
-                bassBody.connect(jcm);
-                jcm.connect(snareTama);
-                snareTama.connect(rudeCymbals);
-                rudeCymbals.connect(sparkle);
-                sparkle.connect(limiter);
-                limiter.connect(finalGain);
-                finalGain.connect(offlineCtx.destination);
+                source.connect(punch); punch.connect(jcm); jcm.connect(rude); rude.connect(comp); comp.connect(gain); gain.connect(offlineCtx.destination);
                 
                 source.start(0);
                 const renderedBuffer = await offlineCtx.startRendering();
@@ -102,9 +86,10 @@
                 
                 document.getElementById('reproductor').src = URL.createObjectURL(blob);
                 document.getElementById('link-descarga').href = URL.createObjectURL(blob);
-                document.getElementById('link-descarga').download = "Master_Arsenal_Platinum.wav";
+                document.getElementById('link-descarga').download = "Master_Sync_Perfecto.wav";
                 document.getElementById('descarga-zona').style.display = 'block';
                 document.getElementById('status').style.display = 'none';
+                tempCtx.close();
             };
             reader.readAsArrayBuffer(file);
         };
@@ -119,11 +104,9 @@
             for(i = 0; i < numOfChan; i++) channels.push(abuffer.getChannelData(i));
             while(pos < length) {
                 for(i = 0; i < numOfChan; i++) {
-                    for(let c=0; c<numOfChan; c++) {
-                        sample = Math.max(-1, Math.min(1, channels[c][offset]));
-                        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-                        view.setInt16(pos, sample, true); pos += 2;
-                    }
+                    sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                    sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+                    view.setInt16(pos, sample, true); pos += 2;
                 }
                 offset++;
             }
